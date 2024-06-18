@@ -7,9 +7,9 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 })
 export class SceneListComponent {
   scenes = [
-    { id: 1, name: 'Scene 1', url: 'https://content.shuffll.com/files/background-music/1.mp4', duration: 5 },
-    { id: 2, name: 'Scene 2', url: 'https://content.shuffll.com/files/background-music/2.mp4', duration: 5 },
-    { id: 3, name: 'Scene 3', url: 'https://content.shuffll.com/files/background-music/3.mp4', duration: 5 },
+    { id: 1, name: 'Scene 1', url: 'https://content.shuffll.com/files/background-music/1.mp4', duration: 5, color: "#dbcfe6" },
+    { id: 2, name: 'Scene 2', url: 'https://content.shuffll.com/files/background-music/2.mp4', duration: 5, color: "#9cc6ff" },
+    { id: 3, name: 'Scene 3', url: 'https://content.shuffll.com/files/background-music/3.mp4', duration: 5, color: "#bcc9bc" },
   ];
 
   // Handles the drag event for a scene. Sets the dragged scene data to the event's dataTransfer object.

@@ -9,7 +9,7 @@
     </div>
   </div>
   <div *ngIf="timeline.length > 0" class="scene-timeline">
-    <div class="marker-container" [ngStyle]="{ 'background-color': timeline.length > 0 ? 'yellow' : 'transparent' }">
+    <div class="marker-container" [ngStyle]="{ 'background-color': timeline.length > 0 ? 'black' : 'transparent' }">
       <div *ngFor="let marker of markers" class="time-marker" [style.left.%]="(marker / totalDuration) * 100"
         (click)="onMarkerClick(marker)">
         {{ marker }}
@@ -23,7 +23,7 @@
       </div>
     </div>
   </div>
-  <div class="button-group">
+  <div class="button-group" *ngIf="timeline.length > 0">
     <button mat-raised-button color="primary" (click)="togglePlayPause()">
       {{ isPlaying ? 'Pause' : 'Play' }}
     </button>

@@ -22,8 +22,8 @@ export class PreviewComponent implements OnChanges, AfterViewInit {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['timeline']) {
       if (this.timeline.length > 0) {
-        const lastScene = this.timeline[this.timeline.length - 1];
-        lastScene.color = this.getRandomColor(); // Assign a random color to the last scene
+        // const lastScene = this.timeline[this.timeline.length - 1];
+        // lastScene.color = this.getRandomColor(); // Assign a random color to the last scene
         this.currentSceneIndex = 0;
         this.setScene(this.timeline[this.currentSceneIndex]);
         this.calculateTotalDuration();
