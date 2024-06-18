@@ -6,7 +6,6 @@ This application allows users to create and manage a video timeline. Users can d
 ## Features
 - **Drag and Drop**: Easily drag scenes from the scene list to the timeline.
 - **Preview Video**: Play individual scenes or the entire timeline.
-- **Responsive Design**: The layout adapts to different screen sizes for optimal usability.
 
 ## Installation
 To run this application locally, follow these steps:
