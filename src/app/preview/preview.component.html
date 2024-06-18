@@ -3,12 +3,12 @@
   <div class="video-container">
     <video #videoPlayer [src]="currentSceneUrl" controls></video>
   </div>
-  <div class="slider-container">
+  <div *ngIf="timeline.length > 0" class="slider-container">
     <div class="time-summary">
       <span>{{ formatTime(currentTime) }} / {{ formatTime(totalDuration) }}</span>
     </div>
   </div>
-  <div class="scene-timeline">
+  <div *ngIf="timeline.length > 0" class="scene-timeline">
     <div class="marker-container" [ngStyle]="{ 'background-color': timeline.length > 0 ? 'yellow' : 'transparent' }">
       <div *ngFor="let marker of markers" class="time-marker" [style.left.%]="(marker / totalDuration) * 100"
         (click)="onMarkerClick(marker)">
@@ -16,7 +16,7 @@
       </div>
     </div>
     <div class="scene-container">
-      <div *ngIf="timeline.length > 0" class="progress-line" [style.left.%]="progressPosition"></div>
+      <div class="progress-line" [style.left.%]="progressPosition"></div>
       <div *ngFor="let scene of timeline" class="scene-segment" [style.width.%]="(scene.duration / totalDuration) * 100"
         [style.backgroundColor]="scene.color">
         {{ scene.name }}

@@ -12,10 +12,14 @@ export class SceneListComponent {
     { id: 3, name: 'Scene 3', url: 'https://content.shuffll.com/files/background-music/3.mp4', duration: 5 },
   ];
 
+  // Handles the drag event for a scene. Sets the dragged scene data to the event's dataTransfer object.
   drag(event: any, scene: any) {
     event.dataTransfer.setData('scene', JSON.stringify(scene));
   }
 
+  //  Plays the selected scene in a hidden video player.
+  //  Displays the video player while the scene is playing.
+  //  Hides the video player when the scene ends.
   playScene(scene: any) {
     const videoPlayer: HTMLVideoElement | null = document.querySelector(`video[src="${scene.url}"]`);
     if (videoPlayer) {

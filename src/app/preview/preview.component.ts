@@ -6,23 +6,24 @@ import { Component, Input, OnChanges, SimpleChanges, ViewChild, ElementRef, Afte
   styleUrls: ['./preview.component.css']
 })
 export class PreviewComponent implements OnChanges, AfterViewInit {
-  @Input() timeline: any[] = [];
-  @ViewChild('videoPlayer', { static: false }) videoPlayer!: ElementRef<HTMLVideoElement>;
-  currentSceneIndex = 0;
-  currentSceneUrl: string = '';
-  currentSceneDuration = 0;
-  currentTime = 0;
-  totalDuration = 0;
-  isPlaying = false;
-  isSliderChanging = false;
-  markers: number[] = [];
-  progressPosition = 0;
+  @Input() timeline: any[] = []; // Timeline input from parent component
+  @ViewChild('videoPlayer', { static: false }) videoPlayer!: ElementRef<HTMLVideoElement>; // Reference to the video element
+  currentSceneIndex = 0; // Index of the current scene
+  currentSceneUrl: string = ''; // URL of the current scene
+  currentSceneDuration = 0; // Duration of the current scene
+  currentTime = 0; // Current time of the video
+  totalDuration = 0; // Total duration of all scenes
+  isPlaying = false; // Indicates if the video is playing
+  isSliderChanging = false; // Indicates if the slider is being changed
+  markers: number[] = []; // Array of time markers
+  progressPosition = 0; // Position of the progress line
 
+  // Called when input properties change. Updates the scene and timeline properties.
   ngOnChanges(changes: SimpleChanges) {
     if (changes['timeline']) {
       if (this.timeline.length > 0) {
         const lastScene = this.timeline[this.timeline.length - 1];
-        lastScene.color = this.getRandomColor();
+        lastScene.color = this.getRandomColor(); // Assign a random color to the last scene
         this.currentSceneIndex = 0;
         this.setScene(this.timeline[this.currentSceneIndex]);
         this.calculateTotalDuration();
@@ -33,20 +34,26 @@ export class PreviewComponent implements OnChanges, AfterViewInit {
       }
     }
   }
+
+  // Called after the view has been initialized. Sets up the video player event listeners.
   ngAfterViewInit() {
     this.setupPlayer();
   }
 
+  // Calculates the total duration of the timeline.
   calculateTotalDuration() {
     this.totalDuration = this.timeline.reduce((acc, scene) => acc + scene.duration, 0);
   }
 
+
+  //  Sets the current scene based on the given scene object.
   setScene(scene: any) {
     this.currentSceneUrl = scene.url;
     this.currentSceneDuration = scene.duration;
     this.currentTime = this.timeline.slice(0, this.currentSceneIndex).reduce((acc, s) => acc + s.duration, 0);
   }
 
+  //  Sets up event listeners for the video player.
   setupPlayer() {
     if (this.videoPlayer && this.videoPlayer.nativeElement) {
       const videoElement = this.videoPlayer.nativeElement;
@@ -57,6 +64,7 @@ export class PreviewComponent implements OnChanges, AfterViewInit {
     }
   }
 
+  // Called when the video can play through without buffering.
   onCanPlayThrough(event: Event) {
     if (this.isPlaying) {
       const videoElement = this.videoPlayer.nativeElement;
@@ -64,6 +72,7 @@ export class PreviewComponent implements OnChanges, AfterViewInit {
     }
   }
 
+  // Called when the video data is loaded.
   onLoadedData(event: Event) {
     if (this.isPlaying) {
       const videoElement = this.videoPlayer.nativeElement;
@@ -71,36 +80,42 @@ export class PreviewComponent implements OnChanges, AfterViewInit {
     }
   }
 
+  // Called when the video's time updates. Updates the current time and progress position.
   onTimeUpdate(event: Event) {
     if (!this.isSliderChanging) {
       const videoElement = this.videoPlayer.nativeElement;
       const currentSceneElapsedTime = videoElement.currentTime;
-      const previousScenesDuration = this.timeline
-        .slice(0, this.currentSceneIndex)
-        .reduce((acc, scene) => acc + scene.duration, 0);
+      const previousScenesDuration = this.timeline.slice(0, this.currentSceneIndex).reduce((acc, scene) => acc + scene.duration, 0);
       this.currentTime = previousScenesDuration + currentSceneElapsedTime;
       this.updateProgress();
     }
   }
 
+  // Called when the video ends. Moves to the next scene or stops playback if at the end.
   onEnded() {
     this.currentSceneIndex++;
     if (this.currentSceneIndex < this.timeline.length) {
-      this.setScene(this.timeline[this.currentSceneIndex]);
-      const videoElement = this.videoPlayer.nativeElement;
-      videoElement.src = this.currentSceneUrl;
-      videoElement.load(); // Pre-load the next scene
+      this.preloadNextScene();
     } else {
-      this.currentSceneIndex = 0; // Reset to the beginning or stop playback
+      this.currentSceneIndex = 0;
       this.currentSceneUrl = '';
-      this.isPlaying = false; // Stop playing
-      this.progressPosition = 0; // Reset progress position
+      this.isPlaying = false;
+      this.progressPosition = 0;
     }
   }
 
+  // Preloads the next scene and starts playback.
+  preloadNextScene() {
+    const videoElement = this.videoPlayer.nativeElement;
+    this.setScene(this.timeline[this.currentSceneIndex]);
+    videoElement.src = this.currentSceneUrl;
+    videoElement.load();
+    videoElement.play();
+  }
+
+  // Toggles between play and pause states.
   togglePlayPause() {
     const videoElement = this.videoPlayer.nativeElement;
-  
     if (this.isPlaying) {
       videoElement.pause();
       this.isPlaying = false;
@@ -109,7 +124,7 @@ export class PreviewComponent implements OnChanges, AfterViewInit {
         this.currentSceneIndex = 0;
         this.setScene(this.timeline[this.currentSceneIndex]);
       }
-  
+
       if (videoElement.readyState >= 3) { // If the video is ready
         videoElement.play();
       } else {
@@ -118,19 +133,15 @@ export class PreviewComponent implements OnChanges, AfterViewInit {
       this.isPlaying = true;
     }
   }
-  onSliderChange(event: any) {
-    this.isSliderChanging = true;
-    const newTime = event.value;
-    this.setCurrentTime(newTime);
-    this.isSliderChanging = false;
-  }
 
+  // Formats the given time in seconds to a mm:ss string.
   formatTime(seconds: number): string {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = Math.floor(seconds % 60);
     return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
   }
 
+  //  Generates a random color in hexadecimal format.
   getRandomColor(): string {
     const letters = '0123456789ABCDEF';
     let color = '#';
@@ -140,10 +151,12 @@ export class PreviewComponent implements OnChanges, AfterViewInit {
     return color;
   }
 
+  // Generates markers for the timeline.
   generateMarkers() {
     this.markers = Array.from({ length: this.totalDuration }, (_, i) => i + 1);
   }
 
+  // Sets the current time of the video to the given time.
   setCurrentTime(newTime: number) {
     let accumulatedTime = 0;
     for (let i = 0; i < this.timeline.length; i++) {
@@ -168,12 +181,13 @@ export class PreviewComponent implements OnChanges, AfterViewInit {
       }
     }
   }
- 
 
+  // Updates the position of the progress line.
   updateProgress() {
     this.progressPosition = (this.currentTime / this.totalDuration) * 100;
   }
 
+  // Called when a marker is clicked. Sets the current time to the marker's time.
   onMarkerClick(marker: number) {
     this.setCurrentTime(marker);
   }

@@ -6,8 +6,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  // Holds the timeline data
   timeline: any = [];
 
+  // Updates the timeline with new data
   updateTimeline(newTimeline: any[]) {
     this.timeline = newTimeline;
   }

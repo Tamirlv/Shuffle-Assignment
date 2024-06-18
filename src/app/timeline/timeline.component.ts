@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
+// Interface defining the structure of a video cell
 interface CustomVideoCellType {
   src: string;
   name: string;
@@ -13,17 +14,18 @@ interface CustomVideoCellType {
   styleUrls: ['./timeline.component.css']
 })
 export class TimelineComponent {
-  @Input() timeline: CustomVideoCellType[] = [];
-  @Output() updateTimeline = new EventEmitter<CustomVideoCellType[]>();
-  @ViewChild('videoPlayer', { static: false }) videoPlayer!: ElementRef<HTMLVideoElement>;
-  title = 'ngx-video-timeline';
 
-  constructor() {}
+  @Input() timeline: CustomVideoCellType[] = []; // Input property to receive the timeline data from the parent component
+  @Output() updateTimeline = new EventEmitter<CustomVideoCellType[]>(); // Output event emitter to notify the parent component about updates to the timeline
+  @ViewChild('videoPlayer', { static: false }) videoPlayer!: ElementRef<HTMLVideoElement>; // Reference to the video player element in the template
 
+  // Handle the drop event within the timeline to reorder items or add new ones
   drop(event: CdkDragDrop<CustomVideoCellType[]>) {
     if (event.previousContainer === event.container) {
+      // Reorder items within the timeline
       moveItemInArray(this.timeline, event.previousIndex, event.currentIndex);
     } else {
+      // Add a new scene to the timeline
       const dataScene = event.item.element.nativeElement.getAttribute('data-scene');
       if (dataScene) {
         const scene = JSON.parse(dataScene);
@@ -33,16 +35,18 @@ export class TimelineComponent {
     }
   }
 
+  // Handle the external drop event to add new scenes
   dropExternal(event: DragEvent) {
     event.preventDefault();
     const sceneData = event.dataTransfer?.getData('scene');
     if (sceneData) {
       const scene = JSON.parse(sceneData);
-      this.timeline = [...this.timeline, scene]; // Create a new array reference
-      this.updateTimeline.emit(this.timeline); // Emit the updated timeline
+      this.timeline = [...this.timeline, scene];
+      this.updateTimeline.emit(this.timeline);
     }
   }
 
+  // Allow drop event to enable drag and drop functionality
   allowDrop(event: DragEvent) {
     event.preventDefault();
   }
