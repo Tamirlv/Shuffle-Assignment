@@ -1,0 +1,12 @@
+<div class="timeline-header">
+  <span>Timeline</span>
+</div>
+<div style="width: 700px; height: 40px;" cdkDropList class="timeline" (cdkDropListDropped)="drop($event)"
+  (dragover)="allowDrop($event)" (drop)="dropExternal($event)">
+  <div style="width: 90%;" *ngIf="timeline.length == 0" class="empty-message">
+    <span>Please drag scenes to the timeline</span>
+  </div>
+  <div *ngFor="let scene of timeline; let i = index" cdkDrag class="timeline-item" [attr.data-scene]="scene | json">
+    <span>{{ scene.name }}</span>
+  </div>
+</div>

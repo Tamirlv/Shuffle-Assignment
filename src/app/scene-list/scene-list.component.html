@@ -1,0 +1,16 @@
+<mat-card class="scene-list">
+  <mat-card-header>
+    <mat-card-title>All Scenes</mat-card-title>
+  </mat-card-header>
+  <mat-divider></mat-divider>
+  <mat-card-content>
+    <div *ngFor="let scene of scenes" class="scene-item" draggable="true" (dragstart)="drag($event, scene)">
+      <mat-card>
+        <p>{{ scene.name }}</p>
+        <p>Duration: {{ scene.duration }}s</p>
+        <button mat-raised-button color="primary" (click)="playScene(scene)">Play</button>
+        <video #videoPlayer [src]="scene.url" style="display: none;"></video>
+      </mat-card>
+    </div>
+  </mat-card-content>
+</mat-card>

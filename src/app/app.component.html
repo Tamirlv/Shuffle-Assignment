@@ -1,0 +1,9 @@
+<div class="container">
+  <div class="sidebar">
+    <app-scene-list></app-scene-list>
+  </div>
+  <div class="main-content">
+    <app-preview [timeline]="timeline"></app-preview>
+    <app-timeline [timeline]="timeline" (updateTimeline)="updateTimeline($event)"></app-timeline>
+  </div>
+</div>

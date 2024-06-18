@@ -1,0 +1,15 @@
+.scene-list {
+  /* height: 100%; */
+  overflow-y: auto;
+  width: 500px;
+}
+
+.scene-item {
+  margin-top: 10px;
+  cursor: grab;
+}
+
+.scene-item mat-card {
+  padding: 10px;
+  text-align: center;
+}

@@ -1,0 +1,31 @@
+<div class="preview-header">Preview</div>
+<mat-card class="preview-card" style="min-width: 750px;">
+  <div class="video-container">
+    <video #videoPlayer [src]="currentSceneUrl" controls></video>
+  </div>
+  <div class="slider-container">
+    <div class="time-summary">
+      <span>{{ formatTime(currentTime) }} / {{ formatTime(totalDuration) }}</span>
+    </div>
+  </div>
+  <div class="scene-timeline">
+    <div class="marker-container" [ngStyle]="{ 'background-color': timeline.length > 0 ? 'yellow' : 'transparent' }">
+      <div *ngFor="let marker of markers" class="time-marker" [style.left.%]="(marker / totalDuration) * 100"
+        (click)="onMarkerClick(marker)">
+        {{ marker }}
+      </div>
+    </div>
+    <div class="scene-container">
+      <div *ngIf="timeline.length > 0" class="progress-line" [style.left.%]="progressPosition"></div>
+      <div *ngFor="let scene of timeline" class="scene-segment" [style.width.%]="(scene.duration / totalDuration) * 100"
+        [style.backgroundColor]="scene.color">
+        {{ scene.name }}
+      </div>
+    </div>
+  </div>
+  <div class="button-group">
+    <button mat-raised-button color="primary" (click)="togglePlayPause()">
+      {{ isPlaying ? 'Pause' : 'Play' }}
+    </button>
+  </div>
+</mat-card>
