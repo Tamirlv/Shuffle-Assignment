@@ -1,7 +1,7 @@
 .scene-list {
   /* height: 100%; */
   overflow-y: auto;
-  width: 500px;
+  width: 100%;
 }
 
 .scene-item {

@@ -22,8 +22,6 @@ export class PreviewComponent implements OnChanges, AfterViewInit {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['timeline']) {
       if (this.timeline.length > 0) {
-        // const lastScene = this.timeline[this.timeline.length - 1];
-        // lastScene.color = this.getRandomColor(); // Assign a random color to the last scene
         this.currentSceneIndex = 0;
         this.setScene(this.timeline[this.currentSceneIndex]);
         this.calculateTotalDuration();
@@ -139,16 +137,6 @@ export class PreviewComponent implements OnChanges, AfterViewInit {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = Math.floor(seconds % 60);
     return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-  }
-
-  //  Generates a random color in hexadecimal format.
-  getRandomColor(): string {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
   }
 
   // Generates markers for the timeline.
