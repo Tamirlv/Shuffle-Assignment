@@ -1,15 +1,16 @@
+<!-- app.component.html -->
 <div class="container-fluid">
   <div class="row">
     <div class="col-12 col-md-4 sidebar">
       <app-scene-list></app-scene-list>
     </div>
     <div class="col-12 col-md-8 main-content">
-      <app-preview [timeline]="timeline"></app-preview>
+      <app-preview [timeline]="timeline" (playingStatus)="onPlayingStatusChange($event)"></app-preview>
     </div>
   </div>
   <div class="row">
     <div class="col-12">
-      <app-timeline [timeline]="timeline" (updateTimeline)="updateTimeline($event)"></app-timeline>
+      <app-timeline [timeline]="timeline" [isPlaying]="isPlaying" (updateTimeline)="updateTimeline($event)"></app-timeline>
     </div>
   </div>
 </div>

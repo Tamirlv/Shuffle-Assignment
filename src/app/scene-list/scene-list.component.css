@@ -1,5 +1,5 @@
+/* scene-list.component.css */
 .scene-list {
-  /* height: 100%; */
   overflow-y: auto;
   width: 100%;
 }
@@ -12,4 +12,12 @@
 .scene-item mat-card {
   padding: 10px;
   text-align: center;
+}
+
+.play-icon {
+  font-size: 24px; /* Adjust size as needed */
+}
+
+.hidden-video {
+  display: none;
 }

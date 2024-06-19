@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, ViewChild, ElementRef, AfterViewInit, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-preview',
@@ -7,7 +7,9 @@ import { Component, Input, OnChanges, SimpleChanges, ViewChild, ElementRef, Afte
 })
 export class PreviewComponent implements OnChanges, AfterViewInit {
   @Input() timeline: any[] = []; // Timeline input from parent component
+  @Output() playingStatus = new EventEmitter<boolean>(); // Output to emit playing status
   @ViewChild('videoPlayer', { static: false }) videoPlayer!: ElementRef<HTMLVideoElement>; // Reference to the video element
+  @ViewChild('timelineContainer', { static: false }) timelineContainer!: ElementRef<HTMLDivElement>; // Reference to the timeline container
   currentSceneIndex = 0; // Index of the current scene
   currentSceneUrl: string = ''; // URL of the current scene
   currentSceneDuration = 0; // Duration of the current scene
@@ -17,6 +19,8 @@ export class PreviewComponent implements OnChanges, AfterViewInit {
   isSliderChanging = false; // Indicates if the slider is being changed
   markers: number[] = []; // Array of time markers
   progressPosition = 0; // Position of the progress line
+  zoomLevel: number = 1; // Zoom level for the timeline
+  zoomOrigin: number = 0; // Zoom origin percentage for the timeline
 
   // Called when input properties change. Updates the scene and timeline properties.
   ngOnChanges(changes: SimpleChanges) {
@@ -43,38 +47,30 @@ export class PreviewComponent implements OnChanges, AfterViewInit {
     this.totalDuration = this.timeline.reduce((acc, scene) => acc + scene.duration, 0);
   }
 
-
-  //  Sets the current scene based on the given scene object.
+  // Sets the current scene based on the given scene object.
   setScene(scene: any) {
     this.currentSceneUrl = scene.url;
     this.currentSceneDuration = scene.duration;
     this.currentTime = this.timeline.slice(0, this.currentSceneIndex).reduce((acc, s) => acc + s.duration, 0);
   }
 
-  //  Sets up event listeners for the video player.
+  // Sets up event listeners for the video player.
   setupPlayer() {
     if (this.videoPlayer && this.videoPlayer.nativeElement) {
       const videoElement = this.videoPlayer.nativeElement;
-      videoElement.addEventListener('canplaythrough', this.onCanPlayThrough.bind(this));
-      videoElement.addEventListener('loadeddata', this.onLoadedData.bind(this));
+      videoElement.addEventListener('loadedmetadata', this.onLoadedMetadata.bind(this));
       videoElement.addEventListener('timeupdate', this.onTimeUpdate.bind(this));
       videoElement.addEventListener('ended', this.onEnded.bind(this));
     }
   }
 
-  // Called when the video can play through without buffering.
-  onCanPlayThrough(event: Event) {
+  // Called when the video metadata is loaded. Plays the video if it is currently playing.
+  onLoadedMetadata(event: Event) {
     if (this.isPlaying) {
       const videoElement = this.videoPlayer.nativeElement;
-      videoElement.play();
-    }
-  }
-
-  // Called when the video data is loaded.
-  onLoadedData(event: Event) {
-    if (this.isPlaying) {
-      const videoElement = this.videoPlayer.nativeElement;
-      videoElement.play();
+      videoElement.play().catch(error => {
+        console.error('Error playing video:', error);
+      });
     }
   }
 
@@ -99,6 +95,7 @@ export class PreviewComponent implements OnChanges, AfterViewInit {
       this.currentSceneUrl = '';
       this.isPlaying = false;
       this.progressPosition = 0;
+      this.playingStatus.emit(false); // Emit playing status as false
     }
   }
 
@@ -108,7 +105,6 @@ export class PreviewComponent implements OnChanges, AfterViewInit {
     this.setScene(this.timeline[this.currentSceneIndex]);
     videoElement.src = this.currentSceneUrl;
     videoElement.load();
-    videoElement.play();
   }
 
   // Toggles between play and pause states.
@@ -117,6 +113,7 @@ export class PreviewComponent implements OnChanges, AfterViewInit {
     if (this.isPlaying) {
       videoElement.pause();
       this.isPlaying = false;
+      this.playingStatus.emit(false); // Emit playing status as false
     } else {
       if (this.currentSceneUrl === '' && this.timeline.length > 0) {
         this.currentSceneIndex = 0;
@@ -124,11 +121,14 @@ export class PreviewComponent implements OnChanges, AfterViewInit {
       }
 
       if (videoElement.readyState >= 3) { // If the video is ready
-        videoElement.play();
+        videoElement.play().catch(error => {
+          console.error('Error playing video:', error);
+        });
       } else {
         videoElement.load(); // Reload the video element
       }
       this.isPlaying = true;
+      this.playingStatus.emit(true); // Emit playing status as true
     }
   }
 
@@ -162,7 +162,9 @@ export class PreviewComponent implements OnChanges, AfterViewInit {
         videoElement.currentTime = newTime - sceneStartTime;
         this.currentTime = newTime;
         if (this.isPlaying) {
-          videoElement.play();
+          videoElement.play().catch(error => {
+            console.error('Error playing video:', error);
+          });
         }
         this.updateProgress();
         break;
@@ -178,5 +180,21 @@ export class PreviewComponent implements OnChanges, AfterViewInit {
   // Called when a marker is clicked. Sets the current time to the marker's time.
   onMarkerClick(marker: number) {
     this.setCurrentTime(marker);
+  }
+
+  // Handles the scroll event to zoom in/out of the timeline.
+  onScroll(event: WheelEvent) {
+    event.preventDefault();
+    const timelineContainerRect = this.timelineContainer.nativeElement.getBoundingClientRect();
+    const mouseX = event.clientX - timelineContainerRect.left;
+    const zoomOriginPercentage = (mouseX / this.timelineContainer.nativeElement.offsetWidth) * 100;
+
+    if (event.deltaY < 0) {
+      this.zoomLevel = Math.min(this.zoomLevel + 0.1, 5);
+    } else {
+      this.zoomLevel = Math.max(this.zoomLevel - 0.1, 1);
+    }
+
+    this.zoomOrigin = zoomOriginPercentage;
   }
 }

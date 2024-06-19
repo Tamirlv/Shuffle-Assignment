@@ -1,12 +1,14 @@
+<!-- timeline.component.html -->
 <div class="timeline-header">
   <span>Timeline</span>
 </div>
-<div style="width: 100%; height: 40px;" cdkDropList class="timeline" (cdkDropListDropped)="drop($event)"
+<div [class.locked]="isPlaying" cdkDropList class="timeline" (cdkDropListDropped)="drop($event)"
   (dragover)="allowDrop($event)" (drop)="dropExternal($event)">
-  <div style="width: 99%;" *ngIf="timeline.length === 0" class="empty-message">
-    <span style="font-weight: bold;">Please drag scenes</span>
+  <div *ngIf="timeline.length === 0" class="empty-message">
+    <span>Please drag scenes</span>
   </div>
   <div *ngFor="let scene of timeline; let i = index" cdkDrag class="timeline-item" [attr.data-scene]="scene | json">
     <span>{{ scene.name }}</span>
+    <mat-icon class="delete-icon" (click)="removeScene(i)">close</mat-icon>
   </div>
 </div>

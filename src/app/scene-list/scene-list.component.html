@@ -1,3 +1,4 @@
+<!-- scene-list.component.html -->
 <mat-card class="scene-list">
   <mat-card-header>
     <mat-card-title>All Scenes</mat-card-title>
@@ -8,8 +9,10 @@
       <mat-card>
         <p>{{ scene.name }}</p>
         <p>Duration: {{ scene.duration }}s</p>
-        <button mat-raised-button color="primary" (click)="playScene(scene)">Play</button>
-        <video #videoPlayer [src]="scene.url" style="display: none;"></video>
+        <button mat-raised-button color="primary" (click)="playScene(scene)">
+          <mat-icon class="play-icon">play_arrow</mat-icon>
+        </button>
+        <video #videoPlayer [src]="scene.url" class="hidden-video"></video>
       </mat-card>
     </div>
   </mat-card-content>

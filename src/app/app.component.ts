@@ -1,3 +1,4 @@
+// app.component.ts
 import { Component } from '@angular/core';
 
 @Component({
@@ -6,11 +7,16 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  // Holds the timeline data
-  timeline: any = [];
+  timeline: any[] = []; // Holds the timeline data
+  isPlaying: boolean = false; // Holds the playing status
 
   // Updates the timeline with new data
   updateTimeline(newTimeline: any[]) {
     this.timeline = newTimeline;
+  }
+
+  // Handles the playing status change
+  onPlayingStatusChange(isPlaying: boolean) {
+    this.isPlaying = isPlaying;
   }
 }
