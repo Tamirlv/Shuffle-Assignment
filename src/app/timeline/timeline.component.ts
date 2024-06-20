@@ -23,28 +23,15 @@ export class TimelineComponent {
   // Handle the drop event within the timeline to reorder items or add new ones
   drop(event: CdkDragDrop<CustomVideoCellType[]>) {
     if (this.isPlaying) return; // Prevent changes if the preview is playing
-
-    if (event.previousContainer === event.container) {
-      // Reorder items within the timeline and create a new reference
-      const updatedTimeline = [...this.timeline];
-      moveItemInArray(updatedTimeline, event.previousIndex, event.currentIndex);
-      this.timeline = updatedTimeline;
-      this.updateTimeline.emit(this.timeline);
-    } else {
-      // Add a new scene to the timeline
-      const dataScene = event.item.element.nativeElement.getAttribute('data-scene');
-      if (dataScene) {
-        const scene = JSON.parse(dataScene);
-        this.timeline = [...this.timeline, scene];
-        this.updateTimeline.emit(this.timeline);
-      }
-    }
+    const updatedTimeline = [...this.timeline];
+    moveItemInArray(updatedTimeline, event.previousIndex, event.currentIndex);
+    this.timeline = updatedTimeline;
+    this.updateTimeline.emit(this.timeline);
   }
 
   // Handle the external drop event to add new scenes
   dropExternal(event: DragEvent) {
     if (this.isPlaying) return; // Prevent changes if the preview is playing
-
     event.preventDefault();
     const sceneData = event.dataTransfer?.getData('scene');
     if (sceneData) {

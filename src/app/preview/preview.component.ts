@@ -184,17 +184,32 @@ export class PreviewComponent implements OnChanges, AfterViewInit {
 
   // Handles the scroll event to zoom in/out of the timeline.
   onScroll(event: WheelEvent) {
+    // Prevent the default scroll behavior
     event.preventDefault();
+
+    // Get the bounding rectangle of the timeline container
     const timelineContainerRect = this.timelineContainer.nativeElement.getBoundingClientRect();
+
+    // Calculate the horizontal position of the mouse relative to the timeline container
     const mouseX = event.clientX - timelineContainerRect.left;
+
+    // Calculate the zoom origin as a percentage of the timeline container width
     const zoomOriginPercentage = (mouseX / this.timelineContainer.nativeElement.offsetWidth) * 100;
 
+    // Calculate the position in the unzoomed view based on the current zoom level and origin
+    const positionUnzoomed = ((zoomOriginPercentage - this.zoomOrigin) / this.zoomLevel) + this.zoomOrigin;
+
+    // Adjust the zoom level based on the scroll direction
     if (event.deltaY < 0) {
+      // Scrolling up: zoom in, but cap the zoom level at 5
       this.zoomLevel = Math.min(this.zoomLevel + 0.1, 5);
     } else {
+      // Scrolling down: zoom out, but do not go below zoom level 1
       this.zoomLevel = Math.max(this.zoomLevel - 0.1, 1);
     }
 
-    this.zoomOrigin = zoomOriginPercentage;
+    // Update the zoom origin to the new unzoomed position
+    this.zoomOrigin = positionUnzoomed;
   }
+
 }

@@ -7,7 +7,7 @@
   <mat-card-content>
     <div *ngFor="let scene of scenes" class="scene-item" draggable="true" (dragstart)="drag($event, scene)">
       <mat-card>
-        <p>{{ scene.name }}</p>
+        <p class="scene-name">{{ scene.name }}</p>
         <p>Duration: {{ scene.duration }}s</p>
         <button mat-raised-button color="primary" (click)="playScene(scene)">
           <mat-icon class="play-icon">play_arrow</mat-icon>
